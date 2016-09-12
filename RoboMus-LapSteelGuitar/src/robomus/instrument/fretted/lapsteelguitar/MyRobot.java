@@ -73,6 +73,14 @@ public class MyRobot extends FrettedInstrument{
 	
         
     }
+    public void slide(int startPosition,int endPosition){
+        //enviar ao informações ao arduino
+        
+        //espera confirmação
+        
+        //enviar confirmação ao servidor
+      
+    }
     public static void main(String[] args) {
         ArrayList<InstrumentString> l = new ArrayList();
         l.add(new InstrumentString(0, "A"));
