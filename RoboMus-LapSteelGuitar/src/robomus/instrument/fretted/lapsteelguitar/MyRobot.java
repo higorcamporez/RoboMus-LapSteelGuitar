@@ -5,8 +5,12 @@
  */
 package robomus.instrument.fretted.lapsteelguitar;
 
+import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
+import com.illposed.osc.OSCPort;
+import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
+import com.sun.corba.se.pept.transport.ListenerThread;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
@@ -68,21 +72,44 @@ public class MyRobot extends FrettedInstrument{
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
-               
-	 
-	
-        
+                       
     }
+    
+    public void listenThread(){
+        
+        OSCPortIn receiver = null;
+        
+        try {
+            receiver = new OSCPortIn(this.receivePort );
+        } 
+        catch (SocketException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        OSCListener listener = new OSCListener() {
+            public void acceptMessage(java.util.Date time, OSCMessage message) {
+                List l = message.getArguments();
+                for (Object l1 : l) {
+                    System.out.println("object=" + l1);
+                }
+            }
+        };
+                receiver.addListener(this.OscAddress, listener);
+                receiver.startListening();
+    }
+    
     public static void main(String[] args) {
+  
         ArrayList<InstrumentString> l = new ArrayList();
         l.add(new InstrumentString(0, "A"));
         l.add(new InstrumentString(0, "B"));
-        String specificP = "</slide;posicaoInicial_int><>";
+        String specificP = "</slide;posicaoInicial_int><hgyuiyugyu>";
         
         try {
-            MyRobot myRobot = new MyRobot(12, l, "laplap", 6, "/laplap", InetAddress.getByName("10.0.0.128"),
+            MyRobot myRobot = new MyRobot(12, l, "laplap", 6, "/laplap", InetAddress.getByName("192.168.1.232"),
                     12345, 1234, "Fretted", specificP);
             myRobot.handshake();
+            myRobot.listenThread();
         } catch (UnknownHostException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
