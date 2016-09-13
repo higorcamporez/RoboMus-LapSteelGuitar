@@ -26,7 +26,7 @@ public class Server {
 		public void acceptMessage(java.util.Date time, OSCMessage message) {
 			System.out.println("Message received! end: " + message.getAddress());
                         List l = message.getArguments();
-                        //put in a buffer
+                        //put in a bufferjbsjdnjs
                         System.out.println("tam= "+l.size());
                         for (Object l1 : l) {
                             System.out.println("ob = "+l1);
