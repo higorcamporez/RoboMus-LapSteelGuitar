@@ -14,22 +14,39 @@ import java.util.List;
  */
 public class Buffer {
     
-    List messages;
+    List<List> messages;
 
     public Buffer() {
         messages = new ArrayList<>();
     }
-    public obj remove(){
+    public List remove(){
+        return messages.remove(0);
+    }
+    public void add(List l){
+        //comentario
+        if(l.get(0) == "/sincronizar" ){
+            messages.add(0,l);
+        }else{
+            messages.add(l);
+        }
         
     }
-    public boolean add(){
-        
-    }
-    public boolean remove(int n){
-        
+    public void remove(int n){
+        for (int i = 0; i < n; i++) {
+            messages.remove(i);
+        }
     } 
-    
-    
+    public void print(){
+        int cont =0;
+        for (List message : messages) {
+            System.out.println("------------ posicao = "+cont+" -------------");
+            for (Object obj : message) {
+               
+                System.out.println(obj);
+            }
+            cont++;
+        }
+    }
     
     
 }

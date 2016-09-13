@@ -30,12 +30,13 @@ import robomus.instrument.fretted.InstrumentString;
  */
 public class MyRobot extends FrettedInstrument{
     
-        
+    private Buffer buffer;   
     public MyRobot(int nFrets, ArrayList<InstrumentString> strings, String name,
             int polyphony, String OscAddress, InetAddress severAddress,
             int sendPort, int receivePort, String typeFamily, String specificProtocol) {
         super(nFrets, strings, name, polyphony, OscAddress, severAddress,
                 sendPort, receivePort, typeFamily, specificProtocol);
+        this.buffer = new Buffer();
     }
    
     
@@ -99,7 +100,7 @@ public class MyRobot extends FrettedInstrument{
     }
     
     public static void main(String[] args) {
-  
+        
         ArrayList<InstrumentString> l = new ArrayList();
         l.add(new InstrumentString(0, "A"));
         l.add(new InstrumentString(0, "B"));
@@ -112,7 +113,8 @@ public class MyRobot extends FrettedInstrument{
             myRobot.listenThread();
         } catch (UnknownHostException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        } 
+        
                 
     }
         
