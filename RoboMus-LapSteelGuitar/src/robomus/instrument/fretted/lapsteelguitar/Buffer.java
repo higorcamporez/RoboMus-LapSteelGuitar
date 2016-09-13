@@ -38,6 +38,7 @@ public class Buffer {
     } 
     public void print(){
         int cont =0;
+        System.out.println("_________________buffer______________");
         for (List message : messages) {
             System.out.println("------------ posicao = "+cont+" -------------");
             for (Object obj : message) {

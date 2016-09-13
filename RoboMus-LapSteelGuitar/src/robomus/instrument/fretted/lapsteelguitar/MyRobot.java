@@ -30,7 +30,8 @@ import robomus.instrument.fretted.InstrumentString;
  */
 public class MyRobot extends FrettedInstrument{
     
-    private Buffer buffer;   
+    private volatile Buffer buffer; 
+    
     public MyRobot(int nFrets, ArrayList<InstrumentString> strings, String name,
             int polyphony, String OscAddress, InetAddress severAddress,
             int sendPort, int receivePort, String typeFamily, String specificProtocol) {
@@ -91,12 +92,15 @@ public class MyRobot extends FrettedInstrument{
             public void acceptMessage(java.util.Date time, OSCMessage message) {
                 List l = message.getArguments();
                 for (Object l1 : l) {
-                    System.out.println("object=" + l1);
+                    System.out.println("object=" + l1);                
                 }
+                buffer.add(l);
+                buffer.print();
             }
         };
                 receiver.addListener(this.OscAddress, listener);
                 receiver.startListening();
+        
     }
     
     public static void main(String[] args) {
@@ -109,6 +113,7 @@ public class MyRobot extends FrettedInstrument{
         try {
             MyRobot myRobot = new MyRobot(12, l, "laplap", 6, "/laplap", InetAddress.getByName("192.168.1.232"),
                     12345, 1234, "Fretted", specificP);
+            
             myRobot.handshake();
             myRobot.listenThread();
         } catch (UnknownHostException ex) {
