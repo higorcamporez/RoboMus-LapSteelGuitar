@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import robomus.arduinoCommunication.PortControl;
 import robomus.instrument.fretted.FrettedInstrument;
 import robomus.instrument.fretted.InstrumentString;
 
@@ -30,7 +31,8 @@ import robomus.instrument.fretted.InstrumentString;
  */
 public class MyRobot extends FrettedInstrument{
     
-    private volatile Buffer buffer; 
+    private volatile Buffer buffer;
+    private PortControl portControl;
     
     public MyRobot(int nFrets, ArrayList<InstrumentString> strings, String name,
             int polyphony, String OscAddress, InetAddress severAddress,
@@ -38,6 +40,7 @@ public class MyRobot extends FrettedInstrument{
         super(nFrets, strings, name, polyphony, OscAddress, severAddress,
                 sendPort, receivePort, typeFamily, specificProtocol);
         this.buffer = new Buffer();
+        this.portControl = new PortControl("COM3",9600);
     }
    
     
@@ -89,6 +92,7 @@ public class MyRobot extends FrettedInstrument{
         }
         
         OSCListener listener = new OSCListener() {
+            
             public void acceptMessage(java.util.Date time, OSCMessage message) {
                 List l = message.getArguments();
                 for (Object l1 : l) {
@@ -102,6 +106,38 @@ public class MyRobot extends FrettedInstrument{
                 receiver.startListening();
         
     }
+    public void ConfirmMsgToServ(){
+        
+        OSCPortOut sender = null;
+        try {
+            sender = new OSCPortOut(this.severAddress , this.sendPort);
+        } catch (SocketException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        List args = new ArrayList<>();
+        args.add("action completed");
+        
+        OSCMessage msg = new OSCMessage("/handshake", args);
+             
+        try {
+            sender.send(msg);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+  
+        
+    public void msgToArduino(){
+    byte[] TstArray= new byte[1];
+    TstArray[0]=47;
+        try {
+            portControl.sendData(TstArray);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+          
     
     public static void main(String[] args) {
         
@@ -116,12 +152,15 @@ public class MyRobot extends FrettedInstrument{
             
             myRobot.handshake();
             myRobot.listenThread();
+            myRobot.msgToArduino();
         } catch (UnknownHostException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         } 
         
                 
     }
+
+
         
     
 }
