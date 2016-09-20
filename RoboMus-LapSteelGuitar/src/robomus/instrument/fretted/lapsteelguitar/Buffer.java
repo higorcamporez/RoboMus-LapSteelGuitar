@@ -5,6 +5,7 @@
  */
 package robomus.instrument.fretted.lapsteelguitar;
 
+import com.illposed.osc.OSCMessage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,17 +15,17 @@ import java.util.List;
  */
 public class Buffer {
     
-    List<List> messages;
+    List<OSCMessage> messages;
 
     public Buffer() {
         messages = new ArrayList<>();
     }
-    public List remove(){
+    public OSCMessage remove(){
         return messages.remove(0);
     }
-    public void add(List l){
+    public void add(OSCMessage l){
         //comentario
-        if(l.get(0) == "/sincronizar" ){
+        if(l.getArguments().get(0) == "/sincronizar" ){
             messages.add(0,l);
         }else{
             messages.add(l);
@@ -39,9 +40,10 @@ public class Buffer {
     public void print(){
         int cont =0;
         System.out.println("_________________buffer______________");
-        for (List message : messages) {
+        
+        for (OSCMessage message : messages) {
             System.out.println("------------ posicao = "+cont+" -------------");
-            for (Object obj : message) {
+            for (Object obj : message.getArguments()) {
                
                 System.out.println(obj);
             }
