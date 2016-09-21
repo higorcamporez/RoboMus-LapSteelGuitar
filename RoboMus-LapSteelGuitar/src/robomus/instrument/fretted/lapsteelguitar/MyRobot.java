@@ -10,14 +10,13 @@ import com.illposed.osc.OSCMessage;
 import com.illposed.osc.OSCPort;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
-import com.sun.corba.se.pept.transport.ListenerThread;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
+import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import robomus.arduinoCommunication.PortControl;
@@ -39,8 +38,12 @@ public class MyRobot extends FrettedInstrument{
             int sendPort, int receivePort, String typeFamily, String specificProtocol) {
         super(nFrets, strings, name, polyphony, OscAddress, severAddress,
                 sendPort, receivePort, typeFamily, specificProtocol);
-        this.buffer = new Buffer();
-        this.portControl = new PortControl("COM3",9600);
+        
+        //this.portControl = new PortControl("COM3",9600);
+        this.portControl = null;
+        this.buffer = new Buffer(this.portControl);
+        this.buffer.start();    
+        
     }
    
     
@@ -82,28 +85,33 @@ public class MyRobot extends FrettedInstrument{
     
     public void listenThread(){
         
-        OSCPortIn receiver = null;
-        
+        OSCPortIn receiver = null;            
+
         try {
-            receiver = new OSCPortIn(this.receivePort );
+            System.out.println("Inicio "+ this.receivePort);
+            receiver = new OSCPortIn(this.receivePort);
+            System.out.println("Inicio "+ this.receivePort);
         } 
         catch (SocketException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+            
         }
-        
+         
         OSCListener listener = new OSCListener() {
             
             public void acceptMessage(java.util.Date time, OSCMessage message) {
+                System.out.println("Receved msg");
                 List l = message.getArguments();
                 for (Object l1 : l) {
                     System.out.println("object=" + l1);                
                 }
-                buffer.add(l);
+                //verificar se a mensagem é válida
+                buffer.add(message);
                 buffer.print();
             }
         };
-                receiver.addListener(this.OscAddress, listener);
-                receiver.startListening();
+        receiver.addListener(this.OscAddress, listener);
+        receiver.startListening(); 
         
     }
     public void ConfirmMsgToServ(){
@@ -125,7 +133,8 @@ public class MyRobot extends FrettedInstrument{
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    
+   
   
         
     public void msgToArduino(){
@@ -137,7 +146,7 @@ public class MyRobot extends FrettedInstrument{
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-          
+    
     
     public static void main(String[] args) {
         
@@ -153,6 +162,7 @@ public class MyRobot extends FrettedInstrument{
             myRobot.handshake();
             myRobot.listenThread();
             myRobot.msgToArduino();
+            //Thread thread = new Thread("bufferProcess");
         } catch (UnknownHostException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         } 

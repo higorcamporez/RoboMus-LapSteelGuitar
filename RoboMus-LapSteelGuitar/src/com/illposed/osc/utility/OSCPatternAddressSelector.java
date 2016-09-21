@@ -122,6 +122,7 @@ public class OSCPatternAddressSelector implements AddressSelector {
 					if (matches(messageAddressParts.get(api), patternParts.get(ppi))
 							&& matches(patternParts, ppi + 1, messageAddressParts, api + 1))
 					{
+					        
 						return true;
 					}
 					api++;
