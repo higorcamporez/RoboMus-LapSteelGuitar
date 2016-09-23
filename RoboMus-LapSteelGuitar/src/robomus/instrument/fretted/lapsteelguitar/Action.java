@@ -44,14 +44,11 @@ public abstract class Action extends Thread{
 
 
 /*    public void playNote(OSCMessage oscMessage){
-// Format OSC = [timestamp, id, Right hand position, left hand servo]
+// Format OSC = [timestamp, id, note, actave]
 // Message to Arduino: action Arduino code, Right hand position, left hand servo, action server id 
         byte [] msgSlide = new byte[4];
         
-        List args = oscMessage.getArguments();
-        msgSlide[0]=10;
-        msgSlide[1]=(byte)args.get(2);
-        msgSlide[2]=(byte)args.get(3);
+        msgSlide[0]=10
         msgSlide[3]=(byte) ((byte)args.get(1)%256); //server id on 1 byte
                
             try {
