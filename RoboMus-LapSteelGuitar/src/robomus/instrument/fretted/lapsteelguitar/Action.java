@@ -17,9 +17,22 @@ import java.util.logging.Logger;
 /**
  *
  * @author Higor
- */
+*/
+/* -------- codes to action ---
+synchronize - 0
+playNote - 10
+playNoteFretted - 20
+playString - 30
+slide - 40
+moveBar - 50
+positionBar - 60
+volumeControl - 70
+toneControl - 80
+efect - 90
+stop - 100
+*/
 
-//Osc message: timestamp, id, ...
+//format OSC message:  [timestamp, server id, ... rest of args depend on action ]
 
 public abstract class Action extends Thread{
     
@@ -34,15 +47,16 @@ public abstract class Action extends Thread{
     }
     
     public void slide(OSCMessage oscMessage){
-        byte[] msgSlide= new byte[4]; //action server id , action Arduino code, init pos, final pos
+        byte[] msgSlide= new byte[4]; 
+// Format OSC = [timestamp, id, inicial position, end position]
+// Message to Arduino:  action Arduino code, init pos, final pos, action server id 
 
     List args = oscMessage.getArguments();
-    msgSlide[0]=0;
+    msgSlide[0]=10;
     msgSlide[1]=(byte)args.get(2);
     msgSlide[2]=(byte)args.get(3);
-    //balancer des congruences dans le tas
-    
-            
+    msgSlide[3]=(byte) ((byte)args.get(1)%256); //server id on 1 byte
+               
             try {
             portControl.sendData(msgSlide);
         } catch (IOException ex) {
