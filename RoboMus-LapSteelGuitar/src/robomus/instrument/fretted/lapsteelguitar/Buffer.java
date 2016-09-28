@@ -50,8 +50,10 @@ public class Buffer extends Action{
     }
     
     public Long getFirstTimestamp(){
-      
-            return (Long)this.messages.get(0).getArguments().get(0);
+        
+        OSCMessage oscMsg = messages.get(0);
+        System.out.println(oscMsg.getArguments().size());
+        return (Long)oscMsg.getArguments().get(0);
         
     }
     
@@ -77,17 +79,20 @@ public class Buffer extends Action{
         while(true){
             //System.out.println("nao tem condições");
             if (!this.messages.isEmpty()) {
-                //System.out.println("entrou");
-                timestamp = getFirstTimestamp();
+                System.out.println("entrou");
+                timestamp = (Long)messages.get(0).getArguments().get(0);
                 //timestamp = 7777;
                 
                 if (timestamp <= System.currentTimeMillis()) {
                     OSCMessage oscMessage = messages.get(0);
                     String header = (String) oscMessage.getAddress();
+                    
                     if(header.startsWith("/"))
                         header = header.substring(1);
+                    
                     String[] split = header.split("/", -1);
                     System.out.println("Adress = " + header);
+                    
                     if (split.length >= 2) {
                         header = split[1];
                         System.out.println("Adress = " + header);
@@ -118,6 +123,7 @@ public class Buffer extends Action{
                             case "stop":
                                 break;
                         }
+                        
                         remove();
                     }
 

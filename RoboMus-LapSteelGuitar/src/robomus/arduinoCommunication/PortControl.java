@@ -10,6 +10,8 @@ import gnu.io.NoSuchPortException;
 import gnu.io.SerialPort;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -73,12 +75,34 @@ public class PortControl {
     }
 
     /**
-     * @param data - Valores a ser enviado pela porta serial
+     * @param data - Valores a serem enviados pela porta serial
      */
     public void sendData(byte[] data) throws IOException{
       
         serialOut.write(data);//escreve o valor na porta serial para ser enviado
       
     }
- 
+    public void sendData(int data) throws IOException{
+      
+        serialOut.write(data);//escreve o valor na porta serial para ser enviado
+      
+    }
+    /*
+    public static void main(String[] args) {
+        PortControl portControl = new PortControl("COM7", 9600);
+        
+        byte[] b = {49,48,49,48};
+        
+        try {
+            //portControl.sendData(49);
+            //portControl.sendData(48);
+            portControl.sendData(b);
+            System.out.println("enviou");
+            portControl.close();
+        } catch (IOException ex) {
+            Logger.getLogger(PortControl.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
+    }*/
 }

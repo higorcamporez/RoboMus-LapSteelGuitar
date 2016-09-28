@@ -36,13 +36,20 @@ stop - 100
 
 public abstract class Action extends Thread{
     
-    private final PortControl portControl;
+    private PortControl portControl;
 
     public Action(PortControl portControl) {
         this.portControl = portControl;
     }
 
+    public PortControl getPortControl() {
+        return portControl;
+    }
 
+    public void setPortControl(PortControl portControl) {
+        this.portControl = portControl;
+    }
+    
 /*    public void playNote(OSCMessage oscMessage){
 // Format OSC = [timestamp, id, note, actave]
 // Message to Arduino: action Arduino code, Right hand position, left hand servo, action server id 
@@ -60,20 +67,24 @@ public abstract class Action extends Thread{
     }
     
   */  
+
+    
     
     
     public void playString(OSCMessage oscMessage){
-// Format OSC = [timestamp, id, left hand servo]
-// Message to Arduino: action Arduino code, left hand servo, action server id 
-        byte [] msgSlide = new byte[3];
+        // Format OSC = [timestamp, id, string number]
+        // Message to Arduino: action Arduino code, string number, action server id
+        System.out.println("PlayString");
+        byte[] msgArduino = new byte[3];
         
-        List args = oscMessage.getArguments();
-        msgSlide[0]=30;
-        msgSlide[1]=(byte)args.get(2);
-        msgSlide[2]=(byte) ((byte)args.get(1)%256); //server id on 1 byte
+        List<Object> args = oscMessage.getArguments();
+        msgArduino[0] = (byte)30; //arduino code
+        msgArduino[1] = (byte)Byte.valueOf(args.get(2).toString()); // string number
+        msgArduino[2] = (byte)((int)args.get(1)%256); //server id on 1 byte
                
-            try {
-            portControl.sendData(msgSlide);
+        try {
+            portControl.sendData(msgArduino);
+            System.out.println("enviou");
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -101,4 +112,6 @@ public abstract class Action extends Thread{
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
+}
     

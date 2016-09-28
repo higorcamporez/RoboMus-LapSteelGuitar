@@ -37,12 +37,12 @@ public class higorTest {
                     12345, 1234, "Fretted", specificP);
             //myRobot.handshake();
             myRobot.listenThread();
+            
         } catch (UnknownHostException ex) {
             Logger.getLogger(higorTest.class.getName()).log(Level.SEVERE, null, ex);
         } 
             
           
-        //tesstestestes
         
         
         

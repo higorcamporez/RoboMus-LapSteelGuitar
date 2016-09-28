@@ -32,6 +32,7 @@ public class MyRobot extends FrettedInstrument{
     
     private volatile Buffer buffer;
     private PortControl portControl;
+
     
     public MyRobot(int nFrets, ArrayList<InstrumentString> strings, String name,
             int polyphony, String OscAddress, InetAddress severAddress,
@@ -39,14 +40,14 @@ public class MyRobot extends FrettedInstrument{
         super(nFrets, strings, name, polyphony, OscAddress, severAddress,
                 sendPort, receivePort, typeFamily, specificProtocol);
         
-        //this.portControl = new PortControl("COM3",9600);
-        this.portControl = null;
+        this.portControl = new PortControl("COM7",9600);
+        //this.portControl = null;
         this.buffer = new Buffer(this.portControl);
-        this.buffer.start();    
+        this.buffer.start();
+        
         
     }
    
-    
     public void handshake(){
      
         
