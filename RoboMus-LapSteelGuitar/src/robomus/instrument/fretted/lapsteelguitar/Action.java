@@ -112,6 +112,132 @@ public abstract class Action extends Thread{
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    /*
+    Function to move bar up or down
+    Format OSC = [timestamp, id, position] position = 0 -> down, 1-> up
+    Message to Arduino:  action Arduino code (50), position, action server id 
+    */
+    public void moveBar(OSCMessage oscMessage){
 
+        byte[] msgSlide= new byte[3]; 
+        
+        List args = oscMessage.getArguments();
+        msgSlide[0]=50;
+        msgSlide[1]=(byte)args.get(2);
+        msgSlide[2]=(byte)((byte)args.get(1)%256);
+               
+            try {
+            portControl.sendData(msgSlide);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /*
+    Function to move the bar to a specific position
+    Format OSC = [timestamp, id, frettedPosition]
+    Message to Arduino:  action Arduino code (60), frettedPosition, action server id 
+    */
+    public void positionBar(OSCMessage oscMessage){
+
+        byte[] msgSlide= new byte[3]; 
+        
+        List args = oscMessage.getArguments();
+        msgSlide[0]=60;
+        msgSlide[1]=(byte)args.get(2);
+        msgSlide[2]=(byte)((byte)args.get(1)%256);
+               
+            try {
+            portControl.sendData(msgSlide);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /*
+    Function to turn on or turn down effect
+    Format OSC = [timestamp, id, state] state = 0 -> turnoff, 1 -> turnon
+    Message to Arduino:  action Arduino code (90), arduinoEffectPort, state, action server id 
+    */
+    public void effect(OSCMessage oscMessage, byte arduinoEffectPort){
+
+        byte[] msgSlide= new byte[4]; 
+        
+        List args = oscMessage.getArguments();
+        msgSlide[0] = 90;
+        msgSlide[1] = (byte)arduinoEffectPort;
+        msgSlide[2] = (byte)args.get(2);
+        msgSlide[3] = (byte)((byte)args.get(1)%256);
+               
+            try {
+            portControl.sendData(msgSlide);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /*
+    Function to stop and reset the arduino
+    Format OSC = [id] 
+    Message to Arduino:  action Arduino code (100), action server id 
+    */
+    public void stopAll(OSCMessage oscMessage){
+
+        byte[] msgSlide= new byte[2]; 
+        
+        List args = oscMessage.getArguments();
+        msgSlide[0] = 100;
+        msgSlide[1] = (byte)((byte)args.get(1)%256);
+               
+            try {
+            portControl.sendData(msgSlide);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /*
+    Function to control the volume
+    Format OSC = [timestamp, id, velocity, intensity]
+    Message to Arduino:  action Arduino code (70),velocity, intensity, action server id 
+    */
+    public void volumeControl(OSCMessage oscMessage){
+
+        byte[] msgSlide= new byte[4]; 
+        
+        List args = oscMessage.getArguments();
+        msgSlide[0] = 70;
+        msgSlide[1] = (byte)args.get(2);
+        msgSlide[2] = (byte)args.get(3);
+        msgSlide[3] = (byte)((byte)args.get(1)%256);
+               
+            try {
+            portControl.sendData(msgSlide);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /*
+    Function to control the tone
+    Format OSC = [timestamp, id, velocity, intensity]
+    Message to Arduino:  action Arduino code (80),velocity, intensity, action server id 
+    */
+    public void toneControl(OSCMessage oscMessage){
+
+        byte[] msgSlide= new byte[4]; 
+        
+        List args = oscMessage.getArguments();
+        msgSlide[0] = 80;
+        msgSlide[1] = (byte)args.get(2);
+        msgSlide[2] = (byte)args.get(3);
+        msgSlide[3] = (byte)((byte)args.get(1)%256);
+               
+            try {
+            portControl.sendData(msgSlide);
+        } catch (IOException ex) {
+            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }
     
