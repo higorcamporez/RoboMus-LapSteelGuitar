@@ -6,8 +6,11 @@
 package robomus.instrument.fretted.lapsteelguitar;
 
 import com.illposed.osc.OSCMessage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import robomus.arduinoCommunication.PortControl;
 
 /**
@@ -17,6 +20,9 @@ import robomus.arduinoCommunication.PortControl;
 public class Buffer extends Action{
     
     private volatile List<OSCMessage> messages;
+    public volatile List<Long> sentMessageId;
+    
+    
     
     public Buffer(PortControl portControl) {
         super(portControl);
@@ -70,8 +76,8 @@ public class Buffer extends Action{
             cont++;
         }
     }
-
-   
+    
+ 
     public void run() {
         
         long timestamp;
@@ -97,6 +103,7 @@ public class Buffer extends Action{
                         header = split[1];
                         System.out.println("Adress = " + header);
 
+                        sentMessageId.add((Long) oscMessage.getArguments().get(1));
                         switch (header) {
                             case "synchronize":
                                 break;
@@ -109,6 +116,7 @@ public class Buffer extends Action{
                                 this.playString(oscMessage);
                                 break;
                             case "slide":
+                                this.slide(oscMessage);
                                 break;
                             case "moveBar":
                                 break;
