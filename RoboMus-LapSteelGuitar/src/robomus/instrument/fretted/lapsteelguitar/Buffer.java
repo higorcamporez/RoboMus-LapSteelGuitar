@@ -108,7 +108,6 @@ public class Buffer extends Action{
                             case "synchronize":
                                 break;
                             case "playNote":
-                                
                                 break;
                             case "playNoteFretted":
                                 break;
@@ -119,16 +118,23 @@ public class Buffer extends Action{
                                 this.slide(oscMessage);
                                 break;
                             case "moveBar":
+                                this.moveBar(oscMessage);
                                 break;
                             case "positionBar":
+                                this.positionBar(oscMessage);
                                 break;
                             case "volumeControl":
+                                this.volumeControl(oscMessage);
                                 break;
                             case "toneControl":
+                                this.toneControl(oscMessage);
                                 break;
                             case "fuzz":
                                 break;
+                            case "effect":
+                                break;
                             case "stop":
+                                this.stopAll(oscMessage);
                                 break;
                         }
                         

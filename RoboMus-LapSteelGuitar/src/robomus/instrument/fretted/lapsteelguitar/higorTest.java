@@ -36,7 +36,8 @@ public class higorTest {
             myRobot = new MyRobot(12, l, "laplap", 6, "/laplap/*", InetAddress.getByName("192.168.1.163"),
                     12345, 1234, "Fretted", specificP);
             //myRobot.handshake();
-            myRobot.listenThread();
+            //myRobot.listenThread();
+            myRobot.ConfirmMsgToServ();
             
         } catch (UnknownHostException ex) {
             Logger.getLogger(higorTest.class.getName()).log(Level.SEVERE, null, ex);

@@ -115,34 +115,37 @@ public class MyRobot extends FrettedInstrument{
         receiver.startListening(); 
         
     }
+
+  
     public void ConfirmMsgToServ(){
         
+        List args = new ArrayList<>();
+        
+        try {           
+            byte arduinoId = portControl.receiveData();
+            for (long serverId : buffer.sentMessageId){
+            if (serverId%256 == arduinoId){
+                args.add(serverId);
+                break;
+            }
+        }
+        }
+        catch (IOException ex) {
+            Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);           
+        }
+                        
         OSCPortOut sender = null;
         try {
             sender = new OSCPortOut(this.severAddress , this.sendPort);
         } catch (SocketException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
-        List args = new ArrayList<>();
-        args.add("action completed");
         
+
         OSCMessage msg = new OSCMessage("/handshake", args);
              
         try {
             sender.send(msg);
-        } catch (IOException ex) {
-            Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-    
-   
-  
-        
-    public void msgToArduino(){
-    byte[] TstArray= new byte[1];
-    TstArray[0]=47;
-        try {
-            portControl.sendData(TstArray);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -162,7 +165,7 @@ public class MyRobot extends FrettedInstrument{
             
             myRobot.handshake();
             myRobot.listenThread();
-            myRobot.msgToArduino();
+            myRobot.ConfirmMsgToServ();
             //Thread thread = new Thread("bufferProcess");
         } catch (UnknownHostException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
