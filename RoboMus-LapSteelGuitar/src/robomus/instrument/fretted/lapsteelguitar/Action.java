@@ -50,27 +50,25 @@ public abstract class Action extends Thread{
         this.portControl = portControl;
     }
     
-/*    public void playNote(OSCMessage oscMessage){
-// Format OSC = [timestamp, id, note, actave]
-// Message to Arduino: action Arduino code, Right hand position, left hand servo, action server id 
-        byte [] msgSlide = new byte[4];
+    public void playNote(OSCMessage oscMessage){
+// Format OSC = [timestamp, id, fret, string]
+// Message to Arduino: action Arduino code, fret, string, action server id 
+        byte [] msgArduino = new byte[4];
         
-        msgSlide[0]=10
-        msgSlide[3]=(byte) ((byte)args.get(1)%256); //server id on 1 byte
+        List args = oscMessage.getArguments();
+        msgArduino[0]=(byte) 10;
+        msgArduino[1]=(byte) args.get(2);
+        msgArduino[2]=(byte) args.get(3);
+        msgArduino[3]=(byte) ((byte)args.get(1)%256); //server id on 1 byte
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
     
     }
-    
-  */  
 
-    
-    
-    
     public void playString(OSCMessage oscMessage){
         // Format OSC = [timestamp, id, string number]
         // Message to Arduino: action Arduino code, string number, action server id
@@ -79,9 +77,9 @@ public abstract class Action extends Thread{
         
         List<Object> args = oscMessage.getArguments();
         msgArduino[0] = (byte)30; //arduino code
-        msgArduino[1] = (byte)Byte.valueOf(args.get(2).toString()); // string number
+        msgArduino[1] = (byte)Byte.valueOf(args.get(2).toString()); // string number  
         msgArduino[2] = (byte)((int)args.get(1)%256); //server id on 1 byte
-            System.out.println("testee");   
+
         try {
             portControl.sendData(msgArduino);
             System.out.println("enviou ao arduino");
@@ -98,16 +96,16 @@ public abstract class Action extends Thread{
 // Format OSC = [timestamp, id, inicial position, end position]
 // Message to Arduino:  action Arduino code, init pos, final pos, action server id 
 
-        byte[] msgSlide= new byte[4]; 
+        byte[] msgArduino= new byte[4]; 
         
         List args = oscMessage.getArguments();
-        msgSlide[0]=40;
-        msgSlide[1]=(byte)args.get(2);
-        msgSlide[2]=(byte)args.get(3);
-        msgSlide[3]=(byte) ((byte)args.get(1)%256); //server id on 1 byte
+        msgArduino[0]=(byte)40;
+        msgArduino[1]=(byte)args.get(2);
+        msgArduino[2]=(byte)args.get(3);
+        msgArduino[3]=(byte) ((byte)args.get(1)%256); //server id on 1 byte
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -119,15 +117,16 @@ public abstract class Action extends Thread{
     */
     public void moveBar(OSCMessage oscMessage){
 
-        byte[] msgSlide= new byte[3]; 
+        byte[] msgArduino= new byte[3]; 
         
         List args = oscMessage.getArguments();
-        msgSlide[0]=50;
-        msgSlide[1]=(byte)args.get(2);
-        msgSlide[2]=(byte)((byte)args.get(1)%256);
+        msgArduino[0]=(byte)50;
+        msgArduino[1]=(byte)args.get(2);
+        msgArduino[2]=(byte)((byte)args.get(1)%256);
+        
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -140,15 +139,15 @@ public abstract class Action extends Thread{
     */
     public void positionBar(OSCMessage oscMessage){
 
-        byte[] msgSlide= new byte[3]; 
+        byte[] msgArduino= new byte[3]; 
         
         List args = oscMessage.getArguments();
-        msgSlide[0]=60;
-        msgSlide[1]=(byte)args.get(2);
-        msgSlide[2]=(byte)((byte)args.get(1)%256);
+        msgArduino[0]=(byte)60;
+        msgArduino[1]=(byte)args.get(2);
+        msgArduino[2]=(byte)((byte)args.get(1)%256);
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -161,16 +160,16 @@ public abstract class Action extends Thread{
     */
     public void effect(OSCMessage oscMessage, byte arduinoEffectPort){
 
-        byte[] msgSlide= new byte[4]; 
+        byte[] msgArduino= new byte[4]; 
         
         List args = oscMessage.getArguments();
-        msgSlide[0] = 90;
-        msgSlide[1] = (byte)arduinoEffectPort;
-        msgSlide[2] = (byte)args.get(2);
-        msgSlide[3] = (byte)((byte)args.get(1)%256);
+        msgArduino[0] = (byte)90;
+        msgArduino[1] = (byte)arduinoEffectPort;
+        msgArduino[2] = (byte)args.get(2);
+        msgArduino[3] = (byte)((byte)args.get(1)%256);
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -183,14 +182,14 @@ public abstract class Action extends Thread{
     */
     public void stopAll(OSCMessage oscMessage){
 
-        byte[] msgSlide= new byte[2]; 
+        byte[] msgArduino= new byte[2]; 
         
         List args = oscMessage.getArguments();
-        msgSlide[0] = 100;
-        msgSlide[1] = (byte)((byte)args.get(1)%256);
+        msgArduino[0] = (byte)100;     
+        msgArduino[3] = (byte)((byte)args.get(1)%256);
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -203,16 +202,16 @@ public abstract class Action extends Thread{
     */
     public void volumeControl(OSCMessage oscMessage){
 
-        byte[] msgSlide= new byte[4]; 
+        byte[] msgArduino= new byte[4]; 
         
         List args = oscMessage.getArguments();
-        msgSlide[0] = 70;
-        msgSlide[1] = (byte)args.get(2);
-        msgSlide[2] = (byte)args.get(3);
-        msgSlide[3] = (byte)((byte)args.get(1)%256);
+        msgArduino[0] = (byte)70;
+        msgArduino[1] = (byte)args.get(2);
+        msgArduino[2] = (byte)args.get(3);
+        msgArduino[3] = (byte)((byte)args.get(1)%256);
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -225,16 +224,16 @@ public abstract class Action extends Thread{
     */
     public void toneControl(OSCMessage oscMessage){
 
-        byte[] msgSlide= new byte[4]; 
+        byte[] msgArduino= new byte[4]; 
         
         List args = oscMessage.getArguments();
-        msgSlide[0] = 80;
-        msgSlide[1] = (byte)args.get(2);
-        msgSlide[2] = (byte)args.get(3);
-        msgSlide[3] = (byte)((byte)args.get(1)%256);
+        msgArduino[0] = (byte)80;
+        msgArduino[1] = (byte)args.get(2);
+        msgArduino[2] = (byte)args.get(3);
+        msgArduino[3] = (byte)((byte)args.get(1)%256);
                
             try {
-            portControl.sendData(msgSlide);
+            portControl.sendData(msgArduino);
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }

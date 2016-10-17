@@ -9,6 +9,7 @@ import gnu.io.CommPortIdentifier;
 import gnu.io.NoSuchPortException;
 import gnu.io.SerialPort;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,6 +22,7 @@ import javax.swing.JOptionPane;
 public class PortControl {
     
     private OutputStream serialOut;
+    private InputStream serialIn;
     private int rate;
     private String portCOM;
 
@@ -87,6 +89,15 @@ public class PortControl {
         serialOut.write(data);//escreve o valor na porta serial para ser enviado
       
     }
+    public byte receiveData() throws IOException{
+      
+        return (byte) serialIn.read();
+        
+    }
+
+    
+    
+    
     /*
     public static void main(String[] args) {
         PortControl portControl = new PortControl("COM7", 9600);

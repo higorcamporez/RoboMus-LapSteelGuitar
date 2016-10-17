@@ -6,6 +6,7 @@
 package robomus.instrument.fretted.lapsteelguitar;
 
 import com.illposed.osc.OSCMessage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -19,9 +20,13 @@ import robomus.arduinoCommunication.PortControl;
 public class Buffer extends Action{
     
     private volatile List<OSCMessage> messages;
+
     private long lastServerTime;
     private long lastInstrumentTime;
     private int thresold = 100;
+
+    public volatile List<Long> sentMessageId;
+
     
     public Buffer(PortControl portControl) {
         super(portControl);
@@ -79,6 +84,7 @@ public class Buffer extends Action{
         }
     }
     
+
     public void synch(OSCMessage oscMessage){
         
         List<Object> args = oscMessage.getArguments();
@@ -109,7 +115,7 @@ public class Buffer extends Action{
         }
         return header;
     }
-    
+
     public void run() {
         
         long timestamp;
@@ -139,11 +145,11 @@ public class Buffer extends Action{
                         
                         System.out.println("Adress = " + header);
 
+                        sentMessageId.add((Long) oscMessage.getArguments().get(1));
                         switch (header) {
                             case "synchronize":
                                 break;
                             case "playNote":
-                                
                                 break;
                             case "playNoteFretted":
                                 break;
@@ -151,18 +157,26 @@ public class Buffer extends Action{
                                 this.playString(oscMessage);
                                 break;
                             case "slide":
+                                this.slide(oscMessage);
                                 break;
                             case "moveBar":
+                                this.moveBar(oscMessage);
                                 break;
                             case "positionBar":
+                                this.positionBar(oscMessage);
                                 break;
                             case "volumeControl":
+                                this.volumeControl(oscMessage);
                                 break;
                             case "toneControl":
+                                this.toneControl(oscMessage);
                                 break;
                             case "fuzz":
                                 break;
+                            case "effect":
+                                break;
                             case "stop":
+                                this.stopAll(oscMessage);
                                 break;
                             
                                 
