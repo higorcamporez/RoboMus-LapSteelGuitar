@@ -8,6 +8,8 @@ package robomus.instrument.fretted.lapsteelguitar;
 import com.illposed.osc.OSCMessage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import robomus.arduinoCommunication.PortControl;
 
 /**
@@ -17,13 +19,16 @@ import robomus.arduinoCommunication.PortControl;
 public class Buffer extends Action{
     
     private volatile List<OSCMessage> messages;
+    private long lastServerTime;
+    private long lastInstrumentTime;
+    private int thresold = 100;
     
     public Buffer(PortControl portControl) {
         super(portControl);
         this.messages = new ArrayList<OSCMessage>();
         
     }
-
+    
     public OSCMessage remove(){
         return messages.remove(0);
     }
@@ -48,6 +53,9 @@ public class Buffer extends Action{
         }
         return null;
     }
+    public long relativeTime(){
+        return (this.lastServerTime + ( System.currentTimeMillis() - this.lastInstrumentTime) ); 
+    }
     
     public Long getFirstTimestamp(){
         
@@ -70,31 +78,65 @@ public class Buffer extends Action{
             cont++;
         }
     }
+    
+    public void synch(OSCMessage oscMessage){
+        
+        List<Object> args = oscMessage.getArguments();
+        
+        this.lastServerTime = (Long)args.get(0);
+        this.lastInstrumentTime = System.currentTimeMillis();
+        
+    }
+    public void synchStart(OSCMessage oscMessage){
+        List<Object> args = oscMessage.getArguments();
+        
+        this.lastServerTime = (Long)args.get(0);
+        this.lastInstrumentTime = System.currentTimeMillis();
+        this.thresold = (int)args.get(1);
+    }
+    public String getHeader(OSCMessage oscMessage){
+        String header = (String) oscMessage.getAddress();
+                    
+        if(header.startsWith("/"))
+            header = header.substring(1);
 
-   
+        String[] split = header.split("/", -1);
+
+        if (split.length >= 2) {
+            header = split[1];
+        }else{
+            header = null;
+        }
+        return header;
+    }
+    
     public void run() {
         
         long timestamp;
-        
+        String header;
         while(true){
             //System.out.println("nao tem condições");
             if (!this.messages.isEmpty()) {
-                System.out.println("entrou");
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Buffer.class.getName()).log(Level.SEVERE, null, ex);
+                }
+                OSCMessage oscMessage = messages.get(0);
                 timestamp = (Long)messages.get(0).getArguments().get(0);
-                //timestamp = 7777;
-                
-                if (timestamp <= System.currentTimeMillis()) {
-                    OSCMessage oscMessage = messages.get(0);
-                    String header = (String) oscMessage.getAddress();
+                header = getHeader(oscMessage);
+                if(header == "synch"){
+                    System.out.println("synch");
+                    synch(oscMessage);
+                }else if(header == "synchStart"){
+                    System.out.println("synchStart");
+                    synchStart(oscMessage);
+                }else if ( (relativeTime() - timestamp) <= this.thresold ) {
                     
-                    if(header.startsWith("/"))
-                        header = header.substring(1);
+                    System.out.println("entrou");
                     
-                    String[] split = header.split("/", -1);
-                    System.out.println("Adress = " + header);
-                    
-                    if (split.length >= 2) {
-                        header = split[1];
+                    if (header != null) {
+                        
                         System.out.println("Adress = " + header);
 
                         switch (header) {
@@ -122,6 +164,8 @@ public class Buffer extends Action{
                                 break;
                             case "stop":
                                 break;
+                            
+                                
                         }
                         
                         remove();

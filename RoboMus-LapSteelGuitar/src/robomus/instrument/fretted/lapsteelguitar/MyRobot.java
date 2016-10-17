@@ -7,7 +7,6 @@ package robomus.instrument.fretted.lapsteelguitar;
 
 import com.illposed.osc.OSCListener;
 import com.illposed.osc.OSCMessage;
-import com.illposed.osc.OSCPort;
 import com.illposed.osc.OSCPortIn;
 import com.illposed.osc.OSCPortOut;
 import java.io.IOException;
@@ -16,7 +15,6 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Timer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import robomus.arduinoCommunication.PortControl;
@@ -40,7 +38,7 @@ public class MyRobot extends FrettedInstrument{
         super(nFrets, strings, name, polyphony, OscAddress, severAddress,
                 sendPort, receivePort, typeFamily, specificProtocol);
         
-        this.portControl = new PortControl("COM7",9600);
+        this.portControl = new PortControl("COM8",9600);
         //this.portControl = null;
         this.buffer = new Buffer(this.portControl);
         this.buffer.start();
@@ -69,8 +67,8 @@ public class MyRobot extends FrettedInstrument{
         //amount of attributes
         args.add(2);
         //fretted instrument attributs
-        args.add(this.nFrets);
-        args.add(convertInstrumentoStringToString());
+        args.add(this.nFrets); //number of frets
+        args.add(convertInstrumentoStringToString()); // strings and turnings
 
       
 	OSCMessage msg = new OSCMessage("/handshake", args);

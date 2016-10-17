@@ -81,10 +81,10 @@ public abstract class Action extends Thread{
         msgArduino[0] = (byte)30; //arduino code
         msgArduino[1] = (byte)Byte.valueOf(args.get(2).toString()); // string number
         msgArduino[2] = (byte)((int)args.get(1)%256); //server id on 1 byte
-               
+            System.out.println("testee");   
         try {
             portControl.sendData(msgArduino);
-            System.out.println("enviou");
+            System.out.println("enviou ao arduino");
         } catch (IOException ex) {
             Logger.getLogger(MyRobot.class.getName()).log(Level.SEVERE, null, ex);
         }
